@@ -44,7 +44,7 @@
               <el-input v-model.number="ruleForm.code"></el-input>
             </el-col>
             <el-col :span="9">
-              <el-button type="success" class="block" @click="getSms()">获取验证码</el-button>
+              <el-button type="success" class="block">获取验证码</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -53,8 +53,7 @@
             type="danger"
             class="login-btn block"
             @click="submitForm('ruleForm')"
-            :disabled="loginBtnStatus"
-            >{{model === "login" ? "登录": "注册"}}</el-button
+            >提交</el-button
           >
         </el-form-item>
       </el-form>
@@ -63,25 +62,23 @@
 </template>
 
 <script>
-import { Login, GetSms } from '@/api/login';
-import { reactive, ref, isRef, onMounted } from "@vue/composition-api";
 export default {
-  setup(props, context) {
-    let checkCode = (rule, value, callback) => {
+  data() {
+    var checkCode = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("年龄不能为空"));
       } else {
         callback();
       }
     };
-    let validateUsername = (rule, value, callback) => {
+    var validateUsername = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入用户名"));
       } else {
         callback(); //true
       }
     };
-    let validatePassword = (rule, value, callback) => {
+    var validatePassword = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"));
       } else if (value.length < 6 || value.length > 20) {
@@ -90,72 +87,46 @@ export default {
         callback();
       }
     };
-    const menuTab = reactive([
-      { txt: "登录", current: true },
-      { txt: "注册", current: false }
-    ]);
-    // 模块值  ref（声明基数数据类型变量时使用）
-    const model = ref("login");
-    // 登录按钮禁用状态
-    const loginBtnStatus = ref(true);
-    const ruleForm = reactive({
-      username: "",
-      password: "",
-      code: ""
-    });
-    const rules = reactive({
-      username: [{ validator: validateUsername, trigger: "blur" }],
-      password: [{ validator: validatePassword, trigger: "blur" }],
-      code: [{ validator: checkCode, trigger: "blur" }]
-    });
-    const getSms = (() => {
-      if(ruleForm.username == '') {
-        context.root.$message.error('请填写验证码');
-        return false;
-      }
-      GetSms({ username: ruleForm.username })
-    })
-    /**
-     * 声明函数
-     */
-    const toggleMenu = data => {
-      menuTab.forEach(elem => {
+    return {
+      ruleForm: {
+        username: "",
+        password: "",
+        code: ""
+      },
+      rules: {
+        username: [{ validator: validateUsername, trigger: "blur" }],
+        password: [{ validator: validatePassword, trigger: "blur" }],
+        code: [{ validator: checkCode, trigger: "blur" }]
+      },
+      menuTab: [
+        { txt: "登录", current: true },
+        { txt: "注册", current: false }
+      ],
+      isActive: true
+    };
+  },
+  //生命周期 - 创建完成（访问当前this实例）
+  created() {},
+  //生命周期 - 挂载完成（访问DOM元素）
+  mounted() {},
+  methods: {
+    // vue数据驱动渲染  // 传统用dom
+    toggleMenu(data) {
+      this.menuTab.forEach(elem => {
         elem.current = false;
       });
       data.current = true;
-    };
-    /**
-     * 提交表单
-     */
-    const submitForm = formName => {
-      context.refs[formName].validate(valid => {
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          Login()
+          alert("submit!");
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-    };
-    /**
-     * 生命周期
-     */
-    // 挂载完成后
-    onMounted(() => {
-    });
-    return {
-      menuTab,
-      model,
-      rules,
-      loginBtnStatus,
-      ruleForm,
-      toggleMenu,
-      submitForm,
-      getSms,
-      checkCode,
-      validateUsername,
-      validatePassword
-    };
+    }
   }
 };
 </script>
