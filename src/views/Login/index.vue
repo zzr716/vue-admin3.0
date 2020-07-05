@@ -17,7 +17,7 @@
         :model="ruleForm"
         status-icon
         :rules="rules"
-        ref="ruleForm"
+        ref="loginForm"
         size="medium"
         class="login-form"
       >
@@ -37,6 +37,14 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
+        <el-form-item class="item-from" prop="passwords" v-show="model === 'register'">
+          <label>重复密码</label>
+          <el-input
+            type="password"
+            v-model="ruleForm.passwords"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
         <el-form-item class="item-from" prop="code">
           <label>验证码</label>
           <el-row :gutter="20">
@@ -44,7 +52,7 @@
               <el-input v-model.number="ruleForm.code"></el-input>
             </el-col>
             <el-col :span="9">
-              <el-button type="success" class="block" @click="getSms()">获取验证码</el-button>
+              <el-button type="success" class="block" :disabled="codeButtonStatus.status" @click="getSms()">{{codeButtonStatus.text}}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -52,7 +60,7 @@
           <el-button
             type="danger"
             class="login-btn block"
-            @click="submitForm('ruleForm')"
+            @click="submitForm('loginForm')"
             :disabled="loginBtnStatus"
             >{{model === "login" ? "登录": "注册"}}</el-button
           >
@@ -91,13 +99,17 @@ export default {
       }
     };
     const menuTab = reactive([
-      { txt: "登录", current: true },
-      { txt: "注册", current: false }
+      { txt: "登录", current: true, type: 'login' },
+      { txt: "注册", current: false, type: 'register' }
     ]);
     // 模块值  ref（声明基数数据类型变量时使用）
     const model = ref("login");
+    const codeButtonStatus = reactive({
+      status: false,
+      text: '获取验证码'
+    });
     // 登录按钮禁用状态
-    const loginBtnStatus = ref(true);
+    const loginBtnStatus = ref(false);
     const ruleForm = reactive({
       username: "",
       password: "",
@@ -113,7 +125,27 @@ export default {
         context.root.$message.error('请填写验证码');
         return false;
       }
-      GetSms({ username: ruleForm.username })
+      // 验证一次邮箱格式
+
+      let requestData = {
+        username: ruleForm.username, 
+        model: model.value
+      }
+      codeButtonStatus.status = false;
+      codeButtonStatus.text = "发送中";
+      setTimeout(() => {
+        GetSms(requestData).then(response => {
+          console.log(response.data);
+          context.root.$message({
+            type: 'success',
+            message: data.message
+          });
+          loginBtnStatus.value = false
+          countDown(60)
+        }).catch(error => {
+          console.log(error);
+        }, 3000)
+      })
     })
     /**
      * 声明函数
@@ -123,20 +155,54 @@ export default {
         elem.current = false;
       });
       data.current = true;
+      model.value = data.type;
+      // 重置表单
+      // this.$refs['loginForm'].resetFields(); // 2.0
+      context.refs['loginForm'].resetFields();
     };
     /**
      * 提交表单
      */
     const submitForm = formName => {
+      return false;
       context.refs[formName].validate(valid => {
         if (valid) {
           Login()
+          // 注册成功之后执行下面两个
+          toggleMenu(menuTab[0]);
+          clearCountDown();
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     };
+    // 倒计时
+    const countDown = ((number) => {
+      // 有一个bug，最开始的60和0不见了
+      clearInterval(time.value) //是否存在，存在就清楚，可以添加判断，也可以直接先说好
+      let time = number
+      time.value = setInterval(() => {
+        time--;
+        if(time === 0) {
+          clearInterval(time.value)
+          codeButtonStatus.status = false
+          codeButtonStatus.text = '再次获取'
+        }else{
+          codeButtonStatus.text = `倒计时${time}s`
+        }
+      }, 1000)
+    })
+    /**
+     * 清楚倒计时
+     */
+    const clearCountDown = (() => {
+      // 还原验证码按钮默认状态
+      codeButtonStatus.status = false
+      codeButtonStatus.text = '获取验证码'
+      // 清楚倒计时
+      clearInterval(time.value)
+    })
     /**
      * 生命周期
      */
@@ -147,6 +213,7 @@ export default {
       menuTab,
       model,
       rules,
+      codeButtonStatus,
       loginBtnStatus,
       ruleForm,
       toggleMenu,
