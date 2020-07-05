@@ -49,7 +49,7 @@
           <label>验证码</label>
           <el-row :gutter="20">
             <el-col :span="15">
-              <el-input v-model.number="ruleForm.code"></el-input>
+              <el-input v-model="ruleForm.code"></el-input>
             </el-col>
             <el-col :span="9">
               <el-button type="success" class="block" :disabled="codeButtonStatus.status" @click="getSms()">{{codeButtonStatus.text}}</el-button>
@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import sha1 from 'js-sha1';
 import { Login, GetSms } from '@/api/login';
 import { reactive, ref, isRef, onMounted } from "@vue/composition-api";
 export default {
@@ -120,6 +121,21 @@ export default {
       password: [{ validator: validatePassword, trigger: "blur" }],
       code: [{ validator: checkCode, trigger: "blur" }]
     });
+    const login = (() => {
+      let requestData = {
+        username: ruleForm.username,
+        password: sha1(ruleForm.password),
+        code: ruleForm.code
+      }
+      Login(requestData).then(response => {
+        context.root.$router.push({
+          name: 'Console',
+          params: {
+          }
+        })
+        console.log('login')
+      }).catch(error => {})
+    })
     const getSms = (() => {
       if(ruleForm.username == '') {
         context.root.$message.error('请填写验证码');
@@ -135,7 +151,7 @@ export default {
       codeButtonStatus.text = "发送中";
       setTimeout(() => {
         GetSms(requestData).then(response => {
-          console.log(response.data);
+          // console.log(response.data);
           context.root.$message({
             type: 'success',
             message: data.message
@@ -164,13 +180,12 @@ export default {
      * 提交表单
      */
     const submitForm = formName => {
-      return false;
       context.refs[formName].validate(valid => {
         if (valid) {
-          Login()
+          login()
           // 注册成功之后执行下面两个
-          toggleMenu(menuTab[0]);
-          clearCountDown();
+          // toggleMenu(menuTab[0]);
+          // clearCountDown();
         } else {
           console.log("error submit!!");
           return false;
