@@ -7,11 +7,20 @@ module.exports = {
   outputDir: process.env_NODE_ENV === "production" ? "dist" : "devdist",
   // eslint是否再保存的时候检查
   lintOnSave: false,
-  chainWebpack: config => {},
+  chainWebpack: config => {
+    const svgRule = config.module.rule("svg");
+    svgRule.uses.clear();
+    svgRule.use("svg-sprite-loader").loader("svg-sprite-loader")
+      .options({
+        symbolId: "icon-[name]",
+        include: ["./src/icons"]
+      });
+  },
   configureWebpack: config => {
     config.resolve = {
       extensions: [".js", ".json", "vue"],
       alias: {
+        "vue": "vue/dist/vue.js",
         "@": path.resolve(__dirname, "./src"),
         public: path.resolve(__dirname, "./public"),
         "@c": path.resolve(__dirname, "./src/components"),
