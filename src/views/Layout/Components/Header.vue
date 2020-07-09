@@ -1,10 +1,24 @@
 <!--  -->
 <template>
-<div id="header-wrap">hh</div>
+<div id="header-wrap">
+    <span @click="navMenuState">click</span>
+    hh
+</div>
 </template>
 
 <script>
-export default {}
+import { ref, reactive, isRef, toRefs, onMounted } from "@vue/composition-api";
+export default {
+    name: 'LayoutHeader',
+    setup(props, { root }){
+        const navMenuState = () => {
+            root.$store.commit('SET_COLLAPS')
+        }
+        return {
+            navMenuState
+        }
+    }
+}
 </script>
 <style lang="scss" scoped>
 @import "../../../style/config.scss";
@@ -17,5 +31,12 @@ export default {}
     height: 75px;
     background-color: #ffffff;
     -webkit-box-shadow: 0 3px 16px 0 rgba(0, 0, 0, .1);
+    @include webkit(transition, all .3s ease 0s);
+}
+.open {
+    #header-wrap { left: $navWidth;}
+}
+.close {
+    #header-wrap { left: 64px;}
 }
 </style>

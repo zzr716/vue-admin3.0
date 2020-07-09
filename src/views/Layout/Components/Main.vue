@@ -20,5 +20,12 @@ export default {}
     border: 30xp solid #f7f7f7;
     border-bottom: none;
     box-sizing: border;
+    @include webkit(transition, all .3s ease 0s);
+}
+.open {
+    #main-wrap { padding-left: $navWidth + 30;}
+}
+.close {
+    #main-wrap { padding-left: $navWidth + 30;}
 }
 </style>
