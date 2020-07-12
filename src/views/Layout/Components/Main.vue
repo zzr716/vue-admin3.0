@@ -6,7 +6,13 @@
 </template>
 
 <script>
-export default {}
+export default {
+    name: 'layoutMain',
+    setup(props, { root }) {
+        const bbb = root.$store.state.login.aaa
+        console.log(bbb)
+    }
+}
 </script>
 <style lang="scss" scoped>
 @import "../../../style/config.scss";

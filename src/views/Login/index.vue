@@ -127,7 +127,7 @@ export default {
         password: sha1(ruleForm.password),
         code: ruleForm.code
       }
-      Login(requestData).then(response => {
+      context.root.$store.dispatch('login', requestData).then(response => {
         context.root.$router.push({
           name: 'Console',
           params: {
@@ -135,6 +135,14 @@ export default {
         })
         console.log('login')
       }).catch(error => {})
+      // Login(requestData).then(response => {
+      //   context.root.$router.push({
+      //     name: 'Console',
+      //     params: {
+      //     }
+      //   })
+      //   console.log('login')
+      // }).catch(error => {})
     })
     const getSms = (() => {
       if(ruleForm.username == '') {
@@ -180,17 +188,18 @@ export default {
      * 提交表单
      */
     const submitForm = formName => {
-      context.refs[formName].validate(valid => {
-        if (valid) {
-          login()
-          // 注册成功之后执行下面两个
-          // toggleMenu(menuTab[0]);
-          // clearCountDown();
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+      // context.refs[formName].validate(valid => {
+      //   if (valid) {
+          // login()
+      //     // 注册成功之后执行下面两个
+      //     // toggleMenu(menuTab[0]);
+      //     // clearCountDown();
+      //   } else {
+      //     console.log("error submit!!");
+      //     return false;
+      //   }
+      // });
+      context.root.$router.push("/console")
     };
     // 倒计时
     const countDown = ((number) => {

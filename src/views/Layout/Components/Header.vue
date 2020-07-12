@@ -12,7 +12,8 @@ export default {
     name: 'LayoutHeader',
     setup(props, { root }){
         const navMenuState = () => {
-            root.$store.commit('SET_COLLAPS')
+            root.$store.commit('app/SET_COLLAPS')
+            // root.$store.dispatch('setMenuStatus')
         }
         return {
             navMenuState

@@ -21,7 +21,7 @@ export default {
     },
     setup(props, { root }){
         console.log(menuStatus)
-        const menuStatus = computed(() => root.$store.state.isCollaps)
+        const menuStatus = computed(() => root.$store.state.app.isCollaps)
         console.log(menuStatus)
 
         return {

@@ -53,7 +53,8 @@ export default {
      * computed监听
      */
     const isCollapse = computed(() => {
-      return root.$store.state.isCollaps;
+      // return root.$store.state.isCollaps;
+      return root.$store.state.app.isCollaps;
     });
     const routers = reactive(root.$router.options.routes);
     /**
