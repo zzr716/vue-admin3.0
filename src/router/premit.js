@@ -6,6 +6,7 @@ const whiteRouter = ['/login']; // indexOF方法，判断数组是否存在指�
 router.beforeEach((to, from, next) => {
     if(getToken()){
         console.log('存在')
+        next();
         // 路由动态添加，分配菜单，每个角色分配不同菜单
     }else {
         // next('/login')

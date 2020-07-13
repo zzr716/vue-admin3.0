@@ -51,13 +51,19 @@
 
 // export default app;
 
+import cookie from "cookie_js";
+import {Login} from "@/api/login";
+import {setToken, setUserName} from "@/utils/app";
 const state = {
     isCollaps: JSON.parse(sessionStorage.getItem('isCollaspse')) || false,
     // isCollaps: JSON.parse(Cookie.get('isCollaspse')) || false,
+    token: '',
+    username: cookie.get('username'),
     count: 10
 }
 const getters = {
-    count: (state) => state.count + 10
+    count: (state) => state.count + 10,
+    username: state => state.username
     // count: function (state) {
     //   return state.count + 10
     // }
@@ -69,6 +75,12 @@ const mutations = {
         // html5本地存储
         sessionStorage.setItem('isCollaspse', JSON.stringify(state.isCollaps))
         // Cookie.set('isCollaspse', JSON.stringify(state.isCollaps))
+    },
+    SET_TOKEN(state, value) {
+        state.token = value
+    },
+    SET_USERNAME(state, value) {
+        state.username = value
     },
     SET_COUNT(state, value) {
         state.count = value
@@ -86,12 +98,18 @@ const actions = {
          * b接口需要a接口返回的数据
          */
     },
-    login(content, data) {
+    login(content, repuestData) {
         return new Promise((resolve, reject) => {
-            Login(data).then((response) => {
-                resolve()
+            Login(repuestData).then((response) => {
+                console.log(response)
+                let data = response.data
+                content.commit('SET_TOKEN', data.token)
+                content.commit('SET_USERNAME', data.username)
+                setToken(data.token)
+                setUserName(data.username)
+                resolve(response)
             }).catch(error => {
-                reject()
+                reject(error)
             })
         })
     }

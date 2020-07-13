@@ -127,11 +127,11 @@ export default {
         password: sha1(ruleForm.password),
         code: ruleForm.code
       }
-      context.root.$store.dispatch('login', requestData).then(response => {
+      context.root.$store.dispatch('app/login', requestData).then(response => {
+        console.log(response)
+        console.log('login1')
         context.root.$router.push({
-          name: 'Console',
-          params: {
-          }
+          name: 'Console'
         })
         console.log('login')
       }).catch(error => {})
@@ -162,12 +162,11 @@ export default {
           // console.log(response.data);
           context.root.$message({
             type: 'success',
-            message: data.message
+            message: response.data.message
           });
           loginBtnStatus.value = false
           countDown(60)
         }).catch(error => {
-          console.log(error);
         }, 3000)
       })
     })
@@ -188,18 +187,18 @@ export default {
      * 提交表单
      */
     const submitForm = formName => {
-      // context.refs[formName].validate(valid => {
-      //   if (valid) {
-          // login()
-      //     // 注册成功之后执行下面两个
-      //     // toggleMenu(menuTab[0]);
-      //     // clearCountDown();
-      //   } else {
-      //     console.log("error submit!!");
-      //     return false;
-      //   }
-      // });
-      context.root.$router.push("/console")
+      context.refs[formName].validate(valid => {
+        if (valid) {
+          login()
+          // 注册成功之后执行下面两个
+          // toggleMenu(menuTab[0]);
+          // clearCountDown();
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+      // context.root.$router.push("/console")
     };
     // 倒计时
     const countDown = ((number) => {

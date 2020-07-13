@@ -87,6 +87,6 @@ export default {
   #nav-wrap { width: $navWidth}
 }
 .close {
-  #nav-wrap { width: 64px}
+  #nav-wrap { width: 64px }
 }
 </style>

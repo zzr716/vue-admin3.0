@@ -19,7 +19,6 @@ export default {
 /* @import url(); 引入css类 */
 #main-wrap {
     position: fixed;
-    left: $navWidth;
     top: 75px;
     right: 0;
     bottom: 0;
@@ -29,9 +28,9 @@ export default {
     @include webkit(transition, all .3s ease 0s);
 }
 .open {
-    #main-wrap { padding-left: $navWidth + 30;}
+    #main-wrap { left: $navWidth + 30px;}
 }
 .close {
-    #main-wrap { padding-left: $navWidth + 30;}
+    #main-wrap { left: 94px;}
 }
 </style>
