@@ -14,17 +14,24 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="2"></el-col>
+        <el-col :span="2">
+          <el-button @click="dialogInfo = true">新增</el-button>
+        </el-col>
       </el-row>
     </el-form>
+    <DialogInfo :flag.sync="dialogInfo" @close="close" />
   </div>
 </template>
 
 <script>
+import DialogInfo from "./dialog/index.vue";
 import { ref, reactive, isRef, toRefs, onMounted } from "@vue/composition-api";
 
 export default {
   name: "infoIndex",
+  components: {
+    DialogInfo
+  },
   setup(props, { root }) {
     const options = reactive([
       {
@@ -49,9 +56,16 @@ export default {
       }
     ]);
     const value = ref("");
+    const dialogInfo = ref(false);
+    const close = () => {
+      console.log(999)
+      dialogInfo.value = false
+    }
     return {
       options,
-      value
+      value,
+      dialogInfo,
+      close
     };
   }
 };
