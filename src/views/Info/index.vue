@@ -22,10 +22,15 @@
 
 <script>
 import { ref, reactive, isRef, toRefs, onMounted } from "@vue/composition-api";
+import { global } from '@/utils/global_v3.0.js'
 
 export default {
   name: "infoIndex",
   setup(props, { root }) {
+    const { confirm } = global()
+
+    confirm()
+
     const options = reactive([
       {
         value: "选项1",
