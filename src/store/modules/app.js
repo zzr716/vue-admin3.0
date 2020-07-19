@@ -102,7 +102,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             Login(repuestData).then((response) => {
                 console.log(response)
-                let data = response.data
+                let data = response.data.data
                 content.commit('SET_TOKEN', data.token)
                 content.commit('SET_USERNAME', data.username)
                 setToken(data.token)

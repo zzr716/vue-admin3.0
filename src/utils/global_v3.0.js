@@ -4,7 +4,7 @@ import { ref } from "@vue/composition-api";
 export function global () {
     const str = ref('')
     const confirm = () => {
-        console.log(111)
+        console.log(133311)
     }
 
     return {
