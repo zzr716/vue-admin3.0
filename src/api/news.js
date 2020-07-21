@@ -33,3 +33,10 @@ export function EditCategory(data) {
         data
     })
 }
+export function GetList(data) {
+    return service.request({
+        method: "post",
+        url: "/news/getList/",
+        data
+    })
+}

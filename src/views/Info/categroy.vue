@@ -91,7 +91,14 @@ export default {
       }).catch(error => {})
     }
     onMounted(() => {
-      getCategory()
+      // getCategory()
+      /**
+       * vuex的actions来调用
+       */
+      root.$store.dispatch('common/getInfoCategory').then(response => {
+        console.log(response)
+        category.item = response.data.data.data
+      })
     })
     const submit = () => {
       if(submit_button_type.value == "catagory_first_add") {

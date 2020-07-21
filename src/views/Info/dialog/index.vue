@@ -1,14 +1,16 @@
 <template>
   <div>
-    <el-dialog title="新增" :visible.sync="dialog_info_flag" :modal-append-to-body="false" @close="close">
+    <el-dialog title="新增" :visible.sync="dialog_info_flag" 
+    :modal-append-to-body="false"
+    @open="openDialog"
+    @close="close">
       <el-form :model="form">
         <el-form-item label="活动名称" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="活动区域" :label-width="formLabelWidth">
           <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option v-for="item in categoryOptions.item" :key="item.id" :label="item.category_name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -52,6 +54,10 @@ export default {
     flag: {
       type: Boolean,
       default: false
+    },
+    category: {
+      type: Array,
+      default: () => []
     }
   },
   // watch: {
@@ -73,11 +79,14 @@ export default {
           resource: '',
           desc: ''
         })
+    const categoryOptions = reactive({
+      item: []
+    })
     const formLabelWidth = ref('120px')
     
     // watch
     watch(() => {
-      console.log(props)
+      // console.log(props)
       dialog_info_flag.value = props.flag
     })
 
@@ -88,11 +97,17 @@ export default {
       emit('update:flag', false)
       // emit('close', false)
     }
+    const openDialog = () => {
+        console.log(props.category)
+        categoryOptions.item = props.category
+    }
     return {
       dialog_info_flag,
       form,
+      categoryOptions,
       formLabelWidth,
-      close
+      close,
+      openDialog
     }
   }
 }

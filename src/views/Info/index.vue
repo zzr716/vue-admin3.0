@@ -6,10 +6,10 @@
           <el-form-item label="类型">
             <el-select v-model="value" placeholder="请选择">
               <el-option
-                v-for="item in options"
+                v-for="item in options.categroy"
                 :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :label="item.category_name"
+                :value="item.id"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -19,14 +19,41 @@
         </el-col>
       </el-row>
     </el-form>
-    <DialogInfo :flag.sync="dialogInfo" @close="close" />
+    <el-table :data="tableData.item" border style="width: 100%">
+      <el-table-column prop="createDate" label="日期" width="180"></el-table-column>
+      <el-table-column prop="content" label="姓名" width="180"></el-table-column>
+      <el-table-column prop="title" label="地址"></el-table-column>
+    </el-table>
+    <div class="block">
+    <span class="demonstration">完整功能</span>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="1"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="10"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="30">
+    </el-pagination>
+  </div>
+    <DialogInfo :category="options.categroy" :flag.sync="dialogInfo" @close="close" />
   </div>
 </template>
 
 <script>
 import DialogInfo from "./dialog/index.vue";
-import { ref, reactive, isRef, toRefs, onMounted } from "@vue/composition-api";
-import { global } from '@/utils/global_v3.0.js'
+import {
+  ref,
+  reactive,
+  isRef,
+  toRefs,
+  onMounted,
+  watch
+} from "@vue/composition-api";
+import { GetCategory, GetList } from "@/api/news";
+import { global } from "@/utils/global_v3.0.js";
+import { common } from "@/api/common";
+import categroyVue from "./categroy.vue";
 
 export default {
   name: "infoIndex",
@@ -34,40 +61,82 @@ export default {
     DialogInfo
   },
   setup(props, { root }) {
-    const { confirm } = global()
+    const { confirm } = global();
+    confirm();
 
-    confirm()
+    const { getInfoCategory, category } = common();
 
-    const options = reactive([
-      {
-        value: "选项1",
-        label: "黄金糕"
-      },
-      {
-        value: "选项2",
-        label: "双皮奶"
-      },
-      {
-        value: "选项3",
-        label: "蚵仔煎"
-      },
-      {
-        value: "选项4",
-        label: "龙须面"
-      },
-      {
-        value: "选项5",
-        label: "北京烤鸭"
-      }
-    ]);
+    const options = reactive({
+      categroy: []
+    });
     const value = ref("");
     const dialogInfo = ref(false);
+    const total = ref('');
+    const tableData = reactive({
+      item: []
+    });
+    const handleSizeChange = (val) => {
+      console.log(333)
+        console.log(`每页 ${val} 条`);
+      }
+    const handleCurrentChange = (val) => {
+      console.log(444)
+        console.log(`当前页: ${val}`);
+      }
     const close = () => {
-      console.log(999)
-      dialogInfo.value = false
-    }
+      console.log(999);
+      dialogInfo.value = false;
+    };
+    const getCategory = () => {
+      console.log(111);
+      GetCategory({})
+        .then(response => {
+          console.log(response.data.data.data);
+          options.categroy = response.data.data.data;
+        })
+        .catch(error => {});
+    };
+    const getList = () => {
+      let requestData = {
+        categoryId: "",
+        startTiem: "",
+        endTime: "",
+        title: "",
+        id: "",
+        pageNumber: 1,
+        pageSize: 10
+      };
+      GetList(requestData)
+        .then(response => {
+          console.log(response.data.data.data);
+          tableData.item = response.data.data.data;
+          console.log(response.data.data.total);
+          total.value = response.data.data.total
+        })
+        .catch(error => {});
+    };
+    /**
+     * 生命周期
+     */
+    onMounted(() => {
+      // getCategory()
+      getInfoCategory();
+      getList();
+    });
+    /**
+     * watch
+     */
+    watch(
+      () => category.item,
+      value => {
+        console.log(value);
+        options.categroy = value;
+      }
+    );
     return {
       options,
+      tableData,
+      total,
       value,
       dialogInfo,
       close
