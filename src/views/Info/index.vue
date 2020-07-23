@@ -30,6 +30,9 @@
       <template slot-scope="scope">
         <el-button type="text" size="small">查看</el-button>
         <el-button type="text" size="small">编辑</el-button>
+        <router-link :to="{name: 'infoDetail', query: {id:scope.row.id}}">
+          <el-button type="text" size="small">详情</el-button>
+        </router-link>
       </template>
     </el-table-column>
     </el-table>
